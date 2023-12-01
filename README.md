@@ -12,11 +12,11 @@
 
 4. 在functions目錄下建立`.env`檔案，把上面取得的資料都寫進去
 
-```bash
-LINE_CHANNEL_ID=
-LINE_CHANNEL_SECRET=
-LINE_CHANNEL_TOKEN=
-```
+   ```bash
+   LINE_CHANNEL_ID=
+   LINE_CHANNEL_SECRET=
+   LINE_CHANNEL_TOKEN=
+   ```
 
 ## 安裝套件
 

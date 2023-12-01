@@ -1,9 +1,11 @@
-/* eslint-disable valid-jsdoc */
-const {onRequest} = require("firebase-functions/v2/https");
+const { onRequest } = require("firebase-functions/v2/https");
+const { setGlobalOptions } = require("firebase-functions/v2");
 const logger = require("firebase-functions/logger");
 
 const express = require("express");
 const line = require("@line/bot-sdk");
+
+setGlobalOptions({ region: "asia-east1" });
 
 require("dotenv").config();
 
@@ -29,20 +31,20 @@ const handleEvent = async (event) => {
     text: msg,
   };
   logger.info(
-      `Hello linebot logs! ${event.replyToken} ${msg}`,
-      {structuredData: true});
+    `Hello linebot logs! ${event.replyToken} ${msg}`,
+    { structuredData: true });
   return client.replyMessage(event.replyToken, echo);
 };
 
 app.post("/webhook", line.middleware(config), (req, res) => {
   // req近來的body內是json,並含有events陣列才進行處理
   Promise
-      .all(req.body.events.map(handleEvent))
-      .then((result) => res.json(result))
-      .catch((error) => {
-        console.error(error);
-        res.status(500).end();
-      });
+    .all(req.body.events.map(handleEvent))
+    .then((result) => res.json(result))
+    .catch((error) => {
+      console.error(error);
+      res.status(500).end();
+    });
 });
 
 // 一個確認ap正常工作的常見作法
