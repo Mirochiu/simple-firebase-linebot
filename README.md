@@ -109,3 +109,23 @@
 手動再部屬新的
 `firebase deploy --only functions:新的名稱`
 
+## 套件指令
+
+`pnpm add {套件名}`
+`pnpm add -D {套件名}`
+`pnpm remove {套件名}`
+`pnpm run {命令}`
+
+## 本機開發
+
+`pnpm run serve` 跑起本機firebase function模擬器
+
+啟動要等一下, 直到跑出url
+
+    ✔  functions[asia-east1-trigger]: http function initialized (http://127.0.0.1:5001/simple-firebase-linebot/asia-east1/trigger).
+
+用curl測試`/ping`可以得到pong結果
+
+`curl 'http://127.0.0.1:5001/simple-firebase-linebot/asia-east1/trigger/ping'`
+
+![](./resources/run-with-emulator-ping.png)
