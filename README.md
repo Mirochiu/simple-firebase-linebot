@@ -27,11 +27,11 @@
    跑一下[nvm的github](https://github.com/nvm-sh/nvm)安裝script並安裝node v18
 
    ```bash
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-   nvm -v  # 0.39.3
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+   nvm -v  # 0.39.5
    nvm install 18
    nvm use 18
-   node -v # v18.16.0
+   node -v # v18.17.1
    ```
 
 2. 安裝firebase工具
@@ -46,8 +46,8 @@
 
    ```bash
    cd functions
-   npm install
-   npm run deploy
+   pnpm install
+   pnpm run deploy
    ```
 
    如果是要從無到有建立
@@ -57,21 +57,23 @@
    firebase deploy --only functions
    ```
 
-   舉例我的部屬完是生成了URL: `https://trigger-tsqxmel55q-uc.a.run.app`
+   舉例我的部屬完是生成了URL: `https://trigger-tsqxmel55q-de.a.run.app`
 
 5. 測試
 
    直接用`/ping`測試是否正確
 
-   `curl https://trigger-tsqxmel55q-uc.a.run.app/ping`
+   `curl https://trigger-tsqxmel55q-de.a.run.app/ping`
 
    會得到`pong`的訊息
 
-6. 拷貝部屬生成的url到LINE的web hooks中
+6. 拷貝上面部屬生成的url到LINE Developers的web hooks中
 
-   將部屬的URL拿去設定在LINE 的Webhook URL中
+   將部屬的URL拿去設定在LINE Developers > Messaging API > Webhook URL中
 
-   `https://trigger-tsqxmel55q-uc.a.run.app/webhook`
+   `https://trigger-tsqxmel55q-de.a.run.app/webhook`
+
+   ![設定Webhook URL](./resources/line-developer-Webhook-settings.png)
 
 ## 將你的LINE BOT分享給別人
 
@@ -87,6 +89,7 @@
 
 [https://line.me/R/ti/p/@342mhjuj](https://line.me/R/ti/p/@342mhjuj)
 
+![line-bot回覆](./resources/mirochiu-line-bot.png)
 
 ## 改變functions的名稱
 
