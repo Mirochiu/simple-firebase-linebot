@@ -4,28 +4,34 @@ const logger = require("firebase-functions/logger");
 
 const express = require("express");
 const line = require("@line/bot-sdk");
+const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 setGlobalOptions({ region: "asia-east1" });
 
 require("dotenv").config();
 
-const config = {
-  channelId: process.env.LINE_CHANNEL_ID,
+const client = new MessagingApiClient({
+  channelAccessToken: process.env.LINE_CHANNEL_TOKEN,
+});
+
+const middleware = line.middleware({
   channelSecret: process.env.LINE_CHANNEL_SECRET,
   channelAccessToken: process.env.LINE_CHANNEL_TOKEN,
-};
-
-const client = new line.Client(config);
+});
 
 const app = express();
 
 app.disable("x-powered-by");
 
 const handleEvent = async (event) => {
-  if (event.type !== "message" || event.message.type !== "text") {
-    return null; // 不處理
+  if (event.type !== "message") {
+    return null; // 只處理訊息
   }
-  const msg = event.message && event.message.text || "<empty>";
+  const message = event.message;
+  if (message.type !== "text") {
+    return null; // 只處理文字訊息
+  }
+  const msg = event.message.text || "<空訊息>";
   const echo = {
     type: "text",
     text: msg,
@@ -33,10 +39,14 @@ const handleEvent = async (event) => {
   logger.info(
     `Hello linebot logs! ${event.replyToken} ${msg}`,
     { structuredData: true });
-  return client.replyMessage(event.replyToken, echo);
+  // 返回文字訊息
+  return client.replyMessage({
+    replyToken: event.replyToken,
+    messages: [echo],
+  });
 };
 
-app.post("/webhook", line.middleware(config), (req, res) => {
+app.post("/webhook", middleware, (req, res) => {
   // req近來的body內是json,並含有events陣列才進行處理
   Promise
     .all(req.body.events.map(handleEvent))
