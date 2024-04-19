@@ -29,11 +29,24 @@ const replyTextMessage = (event, text) =>
     messages: [{ type: "text", text }],
   });
 
-const onTextMessage = (event) => {
+const onTextMessage = async (event) => {
   const text = event.message.text || "<空訊息>";
   const uid = event.source.userId;
   logger.info(`${uid} 的文字訊息: ${text}`);
-  return replyTextMessage(event, text);
+  // 文字指令
+  switch (text) {
+    case "Time":
+    case "time":
+      return replyTextMessage(event, `當前時間: ${new Date().toISOString()}`);
+    case "uid":
+    case "Uid":
+      return replyTextMessage(event, `使用者ID: ${event.source.userId}`);
+    case "Gid":
+    case "gid":
+      return replyTextMessage(event, `群組ID: ${event.source.groupId || "<不在群組內>"}`);
+    default:
+      return replyTextMessage(event, text);
+  }
 }
 
 const handleEvent = async (event) => {
@@ -42,7 +55,7 @@ const handleEvent = async (event) => {
   }
   const type = event.message.type;
   switch (type) {
-    case "text": return onTextMessage(event);
+    case "text": return await onTextMessage(event);
     default: return replyTextMessage(event, `尚未支援的訊息類型: ${type}`);
   }
 };
