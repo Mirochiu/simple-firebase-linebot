@@ -23,27 +23,28 @@ const app = express();
 
 app.disable("x-powered-by");
 
+const replyTextMessage = (event, text) =>
+  client.replyMessage({
+    replyToken: event.replyToken,
+    messages: [{ type: "text", text }],
+  });
+
+const onTextMessage = (event) => {
+  const text = event.message.text || "<空訊息>";
+  const uid = event.source.userId;
+  logger.info(`${uid} 的文字訊息: ${text}`);
+  return replyTextMessage(event, text);
+}
+
 const handleEvent = async (event) => {
   if (event.type !== "message") {
     return null; // 只處理訊息
   }
-  const message = event.message;
-  if (message.type !== "text") {
-    return null; // 只處理文字訊息
+  const type = event.message.type;
+  switch (type) {
+    case "text": return onTextMessage(event);
+    default: return replyTextMessage(event, `尚未支援的訊息類型: ${type}`);
   }
-  const msg = event.message.text || "<空訊息>";
-  const echo = {
-    type: "text",
-    text: msg,
-  };
-  logger.info(
-    `Hello linebot logs! ${event.replyToken} ${msg}`,
-    { structuredData: true });
-  // 返回文字訊息
-  return client.replyMessage({
-    replyToken: event.replyToken,
-    messages: [echo],
-  });
 };
 
 app.post("/webhook", middleware, (req, res) => {
