@@ -13,15 +13,16 @@
   },
   "main": "index.js",
   "dependencies": {
-    "@google-cloud/functions-framework": "^3.3.0",
-    "@line/bot-sdk": "^9.2.0",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "@google-cloud/functions-framework": "^3.5.1",
+    "@line/bot-sdk": "^9.7.3",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "firebase-functions": "^4.9.0"
   },
   "devDependencies": {
-    "firebase-admin": "^12.1.0",
-    "firebase-functions-test": "^3.2.0"
+    "firebase-admin": "^12.7.0",
+    "firebase-functions-test": "^3.4.1"
   },
-  "private": true
+  "private": true,
+  "packageManager": "pnpm@9.12.2+sha512.22721b3a11f81661ae1ec68ce1a7b879425a1ca5b991c975b074ac220b187ce56c708fe5db69f4c962c989452eee76c82877f4ee80f474cebd61ee13461b6228"
 }
