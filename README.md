@@ -1,5 +1,9 @@
 # 建立LINE BOT使用Firebase function
 
+## 更新紀錄
+
+2025/04/01 使用node v20與firebase CLI v14.0.1部屬成功且功能正常
+
 ## 取出LINE BOT需要的設定
 
 註冊並登入[LINE developer](https://developers.line.biz/en/)
@@ -24,19 +28,21 @@
 
    如果你的環境已經有裝npm就怕版本不合,所以用nvm管理就可以快速的切換執行的node版本
 
-   跑一下[nvm的github](https://github.com/nvm-sh/nvm)安裝script並安裝node v18
+   跑一下[nvm的github](https://github.com/nvm-sh/nvm)安裝script並安裝node v20
 
    ```bash
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
    nvm -v  # 0.39.5
-   nvm install 18
-   nvm use 18
-   node -v # v18.17.1
+   nvm install 20
+   nvm use 20
+   node -v # v20.19.0
    ```
 
 2. 安裝firebase工具
 
    `npm install -g firebase-tools`
+
+   `firebase -V` 顯示版本為 14.0.1
 
 3. 登入firebase
 
