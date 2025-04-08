@@ -19,14 +19,29 @@ const middleware = line.middleware({
   channelAccessToken: process.env.LINE_CHANNEL_TOKEN,
 });
 
+// 實作Line Notify的功能
+const NOTIFY_GID = process.env.LINE_NOTIFY_GROUP_ID || '';
+const NOTIFY_TOKEN = process.env.LINE_NOTIFY_TOKEN || ''
+const NOTIFY_AUTH = `Bearer ${NOTIFY_TOKEN}`;
+
 const app = express();
 
 app.disable("x-powered-by");
 
+// 回覆使用者訊息的函式
 const replyTextMessage = (event, text) =>
   client.replyMessage({
     replyToken: event.replyToken,
     messages: [{ type: "text", text }],
+  });
+
+// 推送群組訊息的函式
+//   如果是群組id, 是以C開頭的一個英文與數字編碼的字串
+//   如果是使用者id, 是U開頭的一個英文與數字編碼的字串
+const pushTextMessage = (id, message) =>
+  client.pushMessage({
+    to: id,
+    messages: [{ type: "text", text: message }],
   });
 
 const onStickerMessage = async (event) => {
@@ -85,5 +100,48 @@ app.post("/webhook", middleware, (req, res) => {
 
 // 一個確認ap正常工作的常見作法
 app.get("/ping", (_, res) => res.send("pong"));
+
+app.post("/api/notify", (req, res) => {
+  if (!NOTIFY_TOKEN || !NOTIFY_GID) {
+    // 如果已經部屬且測試成功過,請註解下面這行
+    logger.debug({ message: "env[LINE_NOTIFY_GROUP_ID] or env[LINE_NOTIFY_TOKEN] not set" });
+    return res.status(404).end();
+  }
+
+  const ctype = req.get("Content-Type") || "";
+  const auth = req.get("Authorization") || "";
+
+  // 如果已經部屬且測試成功過,請註解下面這行
+  logger.debug({ 'content-type': ctype, 'authorization': auth, 'body-type': typeof req.body });
+
+  // 目前只實作application/x-www-form-urlencoded
+  if (typeof ctype !== "string" || !ctype.startsWith("application/x-www-form-urlencoded")) {
+    return res.status(400).json({ status: 400, message: "Bad request" });
+  }
+
+  if (typeof auth !== "string") {
+    return res.status(400).json({ status: 400, message: "Bad request" });
+  }
+
+  if (typeof req.body !== "object" || typeof req.body.message !== "string") {
+    return res.status(400).json({ status: 400, message: "Bad request" });
+  }
+
+  if (auth !== NOTIFY_AUTH) {
+    return res.status(401).json({ status: 401, message: "Invalid access token" });
+  }
+
+  const message = req.body.message || '';
+
+  logger.info(`notify ${NOTIFY_GID} with msg:${message}`);
+
+  Promise
+    .all([pushTextMessage(NOTIFY_GID, message)])
+    .then(() => res.json({ message: "Success" }))
+    .catch((error) => {
+      logger.error(error.message, error);
+      res.status(500).json({ status: 500, message: error.message });
+    });
+});
 
 exports.trigger = onRequest(app);

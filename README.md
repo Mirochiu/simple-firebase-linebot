@@ -1,8 +1,29 @@
-# 建立LINE BOT使用Firebase function
+# 建立LINE BOT - 使用Firebase function
+
+## 目錄
+
+- [取出LINE BOT需要的設定](#取出LINE-BOT需要的設定)
+- [安裝套件與部屬LINE BOT](#安裝套件與部屬LINE-BOT)
+- [將你的LINE BOT分享給別人](#將你的LINE-BOT分享給別人)
+- [本機開發LINE BOT](#本機開發LINE-BOT)
+- [簡易Line Notify API](#簡易Line-Notify-API)
+  - [Line Notify所需的環境變數](#加Line-Notify所需的環境變數)
+  - [線上測試Line Notify](#線上測試Line-Notify)
+  - [第二部分](#線上測試Line-Notify)
+- [Appendix](#Appendix)
+  - [改變functions的名稱](#改變functions的名稱)
+  - [pnpm套件管理指令](#pnpm套件管理指令)
 
 ## 更新紀錄
 
-2025/04/01 使用node v20與firebase CLI v14.0.1部屬成功且功能正常
+**2025-04-01**
+
+   使用node v20與firebase CLI v14.0.1部屬成功且功能正常
+
+**2025-04-08**
+
+   1. 升級@line/bot-dsk到9.8.0版
+   2. 加入一個最小可用的Line Notify API供推播訊息
 
 ## 取出LINE BOT需要的設定
 
@@ -22,7 +43,7 @@
    LINE_CHANNEL_TOKEN=
    ```
 
-## 安裝套件
+## 安裝套件與部屬LINE BOT
 
 1. 安裝nvm(Node Version Manager)
 
@@ -42,7 +63,7 @@
 
    `npm install -g firebase-tools`
 
-   `firebase -V` 顯示版本為 14.0.1
+   `firebase -V` 顯示版本為 14.1.0
 
 3. 登入firebase
 
@@ -97,32 +118,7 @@
 
 ![line-bot回覆](./resources/mirochiu-line-bot.png)
 
-## 改變functions的名稱
-
-由於functions會在使用變數名稱作為url的一部分`trigger`, 若想要改成別的名稱
-
-請修改`functions/index.js`的exports成你像要的`新的名稱`
-
-`exports.新的名稱 = onRequest(app);`
-
-部屬的時候firebase tool會自動偵測，並詢問是否要刪除舊有的，按確認就會自動處理。
-
-如果失靈才需要用手動
-
-手動刪除舊的部屬
-`firebase functions:delete trigger`
-
-手動再部屬新的
-`firebase deploy --only functions:新的名稱`
-
-## 套件指令
-
-`pnpm add {套件名}`
-`pnpm add -D {套件名}`
-`pnpm remove {套件名}`
-`pnpm run {命令}`
-
-## 本機開發
+## 本機開發LINE BOT
 
 `pnpm run serve` 跑起本機firebase function模擬器
 
@@ -135,3 +131,84 @@
 `curl 'http://127.0.0.1:5001/simple-firebase-linebot/asia-east1/trigger/ping'`
 
 ![](./resources/run-with-emulator-ping.png)
+
+## 簡易Line Notify API
+
+### Line Notify所需的環境變數
+
+functions目錄下`.env`檔案，加入2項環境變數
+
+  1. LINE_NOTIFY_GROUP_ID指定通知的群組ID
+     這部份你可以把這個line bot加到群組,然後輸入訊息gid來取得你要通知到哪個群組ID
+  2. LINE_NOTIFY_TOKEN指定通知的權杖(TOKEN)
+     可以沿用之前Line Notify給的權杖,或是設定你喜歡的權杖
+
+   ```bash
+   LINE_NOTIFY_GROUP_ID=
+   LINE_NOTIFY_TOKEN=
+   ```
+
+### 本機測試Line Notify
+
+`pnpm run serve` 跑起本機firebase function模擬器
+
+啟動要等一下, 直到跑出url
+
+    ✔  functions[asia-east1-trigger]: http function initialized (http://127.0.0.1:5001/simple-firebase-linebot/asia-east1/trigger).
+
+用curl測試`/api/notify`可以得到 {"message":"Success"} 訊息
+
+```bash
+curl -X POST "http://127.0.0.1:5001/simple-firebase-linebot/asia-east1/trigger/api/notify" \
+   -H "Authorization: Bearer 在Bearer後空一格然後輸入你的權杖" \
+   -d "message=Hello, Line Notify"
+```
+
+### 線上測試Line Notify
+
+1. `pnpm run deploy` 部屬你的function
+
+   部屬後會有個網址如下:
+
+    Function URL (trigger(asia-east1)): https://trigger-tsqxmel55q-de.a.run.app
+
+    ✔  Deploy complete!
+
+    Project Console: https://console.firebase.google.com/project/simple-firebase-linebot/overview
+
+2. 就用那個網址加入`/api/notify`進行測試, 可以得到 {"message":"Success"} 訊息
+
+   ```bash
+   curl -X POST "https://trigger-tsqxmel55q-de.a.run.app/api/notify" \
+   -H "Authorization: Bearer 在Bearer後空一格然後輸入你的權杖" \
+   -d "message=Hello, Line Notify"
+   ```
+
+## Appendix
+
+### 改變functions的名稱
+
+由於functions會在使用變數名稱作為url的一部分`trigger`, 若想要改成別的名稱
+
+請修改`functions/index.js`的exports成你像要的`新的名稱`
+
+`exports.新的名稱 = onRequest(app);`
+
+部屬的時候firebase tool會自動偵測，並詢問是否要刪除舊有的，按確認就會自動處理。
+
+如果失靈才需要用手動
+
+- 手動刪除舊的部屬
+
+  `firebase functions:delete trigger`
+
+- 手動再部屬新的
+
+  `firebase deploy --only functions:新的名稱`
+
+### pnpm套件管理指令
+
+- `pnpm add {套件名}`
+- `pnpm add -D {套件名}`
+- `pnpm remove {套件名}`
+- `pnpm run {命令}`
