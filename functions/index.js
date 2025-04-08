@@ -23,10 +23,13 @@ const middleware = line.middleware({
 const NOTIFY_GID = process.env.LINE_NOTIFY_GROUP_ID || '';
 const NOTIFY_TOKEN = process.env.LINE_NOTIFY_TOKEN || ''
 const NOTIFY_AUTH = `Bearer ${NOTIFY_TOKEN}`;
+const ADMIN_UID = process.env.LINE_ADMIN_ID || '';
 
 const app = express();
 
 app.disable("x-powered-by");
+
+const getTimeString = () => new Date().toISOString();
 
 // 回覆使用者訊息的函式
 const replyTextMessage = (event, text) =>
@@ -35,7 +38,7 @@ const replyTextMessage = (event, text) =>
     messages: [{ type: "text", text }],
   });
 
-// 推送群組訊息的函式
+// 推送訊息的函式
 //   如果是群組id, 是以C開頭的一個英文與數字編碼的字串
 //   如果是使用者id, 是U開頭的一個英文與數字編碼的字串
 const pushTextMessage = (id, message) =>
@@ -54,6 +57,7 @@ const onLocationMessage = async (event) => {
   return replyTextMessage(event, `這個地點是 ${title} 地址: ${address} 緯經度: (${latitude}, ${longitude})`);
 };
 
+// 一般用戶指令
 const onTextMessage = async (event) => {
   const text = event.message.text || "<空訊息>";
   const uid = event.source.userId;
@@ -62,7 +66,7 @@ const onTextMessage = async (event) => {
   switch (text) {
     case "Time":
     case "time":
-      return replyTextMessage(event, `當前時間: ${new Date().toISOString()}`);
+      return replyTextMessage(event, `當前時間: ${getTimeString()}`);
     case "uid":
     case "Uid":
       return replyTextMessage(event, `使用者ID: ${event.source.userId}`);
@@ -74,16 +78,88 @@ const onTextMessage = async (event) => {
   }
 };
 
+// 管理者指令
+const onAdminMessage = async (event) => {
+  if (!event.message.text) return;
+  const text = event.message.text;
+  logger.info(`收到管理者的文字訊息: ${text}`);
+
+  const replyAsync = async (evt, msg) => {
+    if (typeof msg !== 'string') {
+      logger.info(`沒有辦法回覆非文字的訊息: ${msg}`);
+      return;
+    }
+
+    const BASE_MSG =
+      '當前時間: ' + getTimeString() + '\n' +
+      '預設群發GID: ' + NOTIFY_GID + '\n' +
+      '管理者UID: ' + ADMIN_UID + '\n';
+
+    return await replyTextMessage(evt, BASE_MSG + msg);
+  };
+
+  if (text === '訊息額度') {
+    const total = (await client.getMessageQuota()).value;
+    const used = (await client.getMessageQuotaConsumption()).totalUsage;
+    const percentage = (used * 100.0 / total).toFixed(1);
+    const msg = `本月額度: ${used} / ${total} 已使用: ${percentage}%`;
+    logger.info(msg);
+    return await replyAsync(event, msg);
+  }
+
+  if (text.startsWith('群發')) {
+    const msg = text.substring(2) || '<沒有訊息內容>';
+    logger.info(`群發: ${NOTIFY_GID} 訊息:${msg}`);
+
+    await pushTextMessage(NOTIFY_GID, msg);
+    return await replyAsync(event, `訊息:${msg}`);
+  }
+
+  if (text.startsWith('發到')) {
+    let [gid, msg] = text.substring(2).split(',');
+    if (typeof gid === 'string') {
+      gid = gid.trim();
+    }
+    if (typeof msg !== 'string') {
+      msg = '<沒有訊息>'
+    }
+    logger.info(`發到: ${gid}`);
+
+    // 沒有指定
+    if (typeof gid !== 'string' || !gid.startsWith('C')) {
+      throw new Error(`訊息指定的群組ID格式不符:${gid}`);
+    }
+
+    await pushTextMessage(gid, msg);
+    return await replyAsync(event, `發到群組ID: ${gid}\n訊息:${msg}`);
+  }
+
+  // 預設指令
+  return await onTextMessage(event);
+}
+
 const handleEvent = async (event) => {
   if (event.type !== "message") {
     return null; // 只處理訊息
   }
-  const type = event.message.type;
-  switch (type) {
-    case "text": return await onTextMessage(event); // 文字訊息
-    case "sticker": return await onStickerMessage(event); // 貼圖訊息
-    case "location": return await onLocationMessage(event); // 地點訊息
-    default: return replyTextMessage(event, `尚未支援的訊息類型: ${type}`);
+
+  try {
+    const type = event.message.type;
+    switch (type) {
+      case "text": {
+        if (ADMIN_UID && ADMIN_UID === event.source.userId) {
+          return await onAdminMessage(event);
+        }
+
+        return await onTextMessage(event); // 文字訊息
+      }
+      case "sticker": return await onStickerMessage(event); // 貼圖訊息
+      case "location": return await onLocationMessage(event); // 地點訊息
+      default: return replyTextMessage(event, `尚未支援的訊息類型: ${type}`);
+    }
+  } catch (error) {
+    logger.error(`${error.stack || error.message || error}`);
+    return await replyAsync(event, `錯誤: ${error.message || error || "不明錯誤"}`);
   }
 };
 

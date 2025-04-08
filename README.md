@@ -152,14 +152,19 @@
 
 functions目錄下`.env`檔案，加入2項環境變數
 
-  1. LINE_NOTIFY_GROUP_ID指定通知的群組ID
+  1. `LINE_NOTIFY_GROUP_ID` 指定通知的群組ID
      這部份你可以把這個line bot加到群組,然後輸入訊息gid來取得你要通知到哪個群組ID
-  2. LINE_NOTIFY_TOKEN指定通知的權杖(TOKEN)
+  2. `LINE_NOTIFY_TOKEN` 指定通知的權杖(TOKEN)
      可以沿用之前Line Notify給的權杖,或是設定你喜歡的權杖
+  3. `LINE_ADMIN_ID` 指定管理者的ID，可以直接在BOT的對話使用以下管理員功能(注意：會耗用LINE訊息額度)
+     - 管理員傳訊息 `訊息額度` 可以查詢目前額度
+     - 管理員傳訊息 `群發 <要傳的訊息>` 可以把要傳的訊息送到 `LINE_NOTIFY_GROUP_ID` 的訊息中
+     - 管理員傳訊息 `發到 <ID>,<要傳的訊息>` 可以指定要傳的 `ID` 可以是使用者ID或是群組ID(不是指朋友名稱)
 
    ```bash
    LINE_NOTIFY_GROUP_ID=
    LINE_NOTIFY_TOKEN=
+   LINE_ADMIN_ID=
    ```
 
 ### 本機測試Line Notify
