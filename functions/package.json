@@ -14,7 +14,7 @@
   "main": "index.js",
   "dependencies": {
     "@google-cloud/functions-framework": "^3.5.1",
-    "@line/bot-sdk": "^9.7.3",
+    "@line/bot-sdk": "^9.8.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "firebase-functions": "^6.3.2"
