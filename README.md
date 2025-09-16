@@ -16,6 +16,11 @@
 
 ## 更新紀錄
 
+**2025-09-16**
+
+   1. 升級@line/bot-sdk到10.2.0版
+   2. 因github通知相關套件有弱點,升級所有相依套件以及pnpm
+
 **2025-07-24**
 
    1. 升級@line/bot-sdk到9.9.0版
@@ -59,9 +64,13 @@
    ```bash
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
    nvm -v  # 0.39.5
+   # 安裝 node.js
    nvm install 20
    nvm use 20
    node -v # v20.19.4
+   # 啟用 pnpm 套件管理程式
+   corepack enable pnpm
+   pnpm -v # 10.16.1
    ```
 
 2. 安裝firebase工具
@@ -185,8 +194,8 @@ curl -X POST "http://127.0.0.1:5001/simple-firebase-linebot/asia-east1/trigger/a
 
    ```bash
    curl -X POST "https://trigger-tsqxmel55q-de.a.run.app/api/notify" \
-   -H "Authorization: Bearer 在Bearer後空一格然後輸入你的權杖" \
-   -d "message=Hello, Line Notify"
+     -H "Authorization: Bearer 在Bearer後空一格然後輸入你的權杖" \
+     -d "message=Hello, Line Notify"
    ```
 
 ## Appendix
