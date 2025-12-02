@@ -16,19 +16,10 @@
 
 ## 更新紀錄
 
-**2025-09-16**
+**2025-12-02**
 
-   1. 升級@line/bot-sdk到10.2.0版
+   1. 升級@line/bot-sdk到10.5.0版
    2. 因github通知相關套件有弱點,升級所有相依套件以及pnpm
-
-**2025-07-24**
-
-   1. 升級@line/bot-sdk到9.9.0版
-   2. 因github通知相關套件有弱點,升級所有相依套件以及pnpm
-
-**2025-04-01**
-
-   使用node v20與firebase CLI v14.0.1部屬成功且功能正常
 
 **2025-04-08**
 
@@ -67,17 +58,17 @@
    # 安裝 node.js
    nvm install 20
    nvm use 20
-   node -v # v20.19.4
+   node -v # v20.19.5
    # 啟用 pnpm 套件管理程式
    corepack enable pnpm
-   pnpm -v # 10.16.1
+   pnpm -v # 10.24.0
    ```
 
 2. 安裝firebase工具
 
    `npm install -g firebase-tools`
 
-   `firebase -V` 顯示版本為 14.11.1
+   `firebase -V` 顯示版本為 14.26.0
 
 3. 登入firebase
 
