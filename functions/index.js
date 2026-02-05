@@ -159,7 +159,7 @@ const handleEvent = async (event) => {
     }
   } catch (error) {
     logger.error(`${error.stack || error.message || error}`);
-    return await replyAsync(event, `錯誤: ${error.message || error || "不明錯誤"}`);
+    return await replyTextMessage(event, `錯誤: ${error.message || error || "不明錯誤"}`);
   }
 };
 
