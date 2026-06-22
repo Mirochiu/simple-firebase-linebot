@@ -16,15 +16,16 @@
 
 ## 更新紀錄
 
+**2026-06-22**
+
+1. 升級相依套件
+2. 升級到Node.js v22 LTS (v22.22.0)
+3. 因為v22增加限制，改寫成ESM
+
 **2025-12-02**
 
    1. 升級@line/bot-sdk到10.5.0版
    2. 因github通知相關套件有弱點,升級所有相依套件以及pnpm
-
-**2025-04-08**
-
-   1. 升級@line/bot-sdk到9.8.0版
-   2. 加入一個最小可用的Line Notify API供推播訊息
 
 ## 取出LINE BOT需要的設定
 
@@ -53,22 +54,25 @@
    跑一下[nvm的github](https://github.com/nvm-sh/nvm)安裝script並安裝node v20
 
    ```bash
-   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
-   nvm -v  # 0.39.5
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
+   nvm -v  # 0.40.5
    # 安裝 node.js
-   nvm install 20
-   nvm use 20
-   node -v # v20.19.5
+   nvm install 22.22.0
+   nvm use 22
+   node -v # v22.22.0
    # 啟用 pnpm 套件管理程式
    corepack enable pnpm
-   pnpm -v # 10.24.0
+   pnpm -v # 11.8.0
    ```
 
 2. 安裝firebase工具
 
-   `npm install -g firebase-tools`
+   `pnpm add -g firebase-tools`
 
-   `firebase -V` 顯示版本為 14.26.0
+   `firebase -V` 顯示版本為 15.22.0
+
+   如果是使用standalone firebase CLI, 可移除firebase CLI；改用pnpm安裝，以避免換Node.js版本調用firebase依然是叫舊版的問題
+   `rm -f $(which firebase)`
 
 3. 登入firebase
 

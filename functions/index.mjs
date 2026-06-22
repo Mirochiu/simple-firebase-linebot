@@ -1,14 +1,14 @@
-const { onRequest } = require("firebase-functions/v2/https");
-const { setGlobalOptions } = require("firebase-functions/v2");
-const logger = require("firebase-functions/logger");
+import { onRequest } from "firebase-functions/v2/https";
+import { setGlobalOptions } from "firebase-functions/v2";
+import * as logger from "firebase-functions/logger";
 
-const express = require("express");
-const line = require("@line/bot-sdk");
+import express from "express";
+import * as line from "@line/bot-sdk";
+import "dotenv/config"; // 自動執行 dotenv.config()
+
 const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 setGlobalOptions({ region: "asia-east1" });
-
-require("dotenv").config();
 
 const client = new MessagingApiClient({
   channelAccessToken: process.env.LINE_CHANNEL_TOKEN,
@@ -21,7 +21,7 @@ const middleware = line.middleware({
 
 // 實作Line Notify的功能
 const NOTIFY_GID = process.env.LINE_NOTIFY_GROUP_ID || '';
-const NOTIFY_TOKEN = process.env.LINE_NOTIFY_TOKEN || ''
+const NOTIFY_TOKEN = process.env.LINE_NOTIFY_TOKEN || '';
 const NOTIFY_AUTH = `Bearer ${NOTIFY_TOKEN}`;
 const ADMIN_UID = process.env.LINE_ADMIN_ID || '';
 
@@ -220,4 +220,4 @@ app.post("/api/notify", (req, res) => {
     });
 });
 
-exports.trigger = onRequest(app);
+export const trigger = onRequest(app);
