@@ -51,25 +51,25 @@
 
    如果你的環境已經有裝npm就怕版本不合,所以用nvm管理就可以快速的切換執行的node版本
 
-   跑一下[nvm的github](https://github.com/nvm-sh/nvm)安裝script並安裝node v20
+   跑一下[nvm的github](https://github.com/nvm-sh/nvm)安裝script並安裝node v22
 
    ```bash
    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
    nvm -v  # 0.40.5
    # 安裝 node.js
-   nvm install 22.22.0
+   nvm install 22.23.2
    nvm use 22
-   node -v # v22.22.0
+   node -v # v22.23.2
    # 啟用 pnpm 套件管理程式
    corepack enable pnpm
-   pnpm -v # 11.8.0
+   pnpm -v # 11.20.0
    ```
 
 2. 安裝firebase工具
 
    `pnpm add -g firebase-tools`
 
-   `firebase -V` 顯示版本為 15.22.0
+   `firebase -V` 顯示版本為 15.26.0
 
    如果是使用standalone firebase CLI, 可移除firebase CLI；改用pnpm安裝，以避免換Node.js版本調用firebase依然是叫舊版的問題
    `rm -f $(which firebase)`
