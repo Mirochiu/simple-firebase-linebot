@@ -6,4 +6,6 @@ allowBuilds:
 overrides:
   "fast-xml-parser": 5.10.1
   "brace-expansion": 2.1.4
-  "fast-uri": 3.1.5
+
+audit:
+  level: high
