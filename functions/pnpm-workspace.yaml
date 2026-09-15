@@ -6,6 +6,8 @@ allowBuilds:
 overrides:
   "fast-xml-parser": 5.10.1
   "brace-expansion": 2.1.4
+  "uuid": 14.0.0
+  "jose": "^5.9.6"
 
 audit:
   level: high
